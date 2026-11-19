@@ -1,12 +1,278 @@
-html, body { margin: 0; height: 100%; background: #f2f0f4; color: #1d1b22; font: 15px/1.4 system-ui, sans-serif; }
-.app { display: flex; gap: 32px; align-items: center; justify-content: center; height: 100%; padding: 24px; box-sizing: border-box; }
-.controls { display: flex; flex-direction: column; gap: 14px; width: 280px; }
-.controls h1 { margin: 0; font-size: 28px; }
-.controls p { margin: 0; color: #5c5866; }
-label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
-input[type=text] { font: inherit; padding: 8px; border: 1px solid #c9c4d1; border-radius: 6px; }
-button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 6px; background: #1d1b22; color: #fff; cursor: pointer; }
-canvas { width: min(70vh, 60vw); height: min(70vh, 60vw); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
-body.shot-cover .controls { display: none; }
-body.shot-cover .app { padding: 0; }
-body.shot-cover canvas { width: 100vw; height: 100vh; box-shadow: none; }
+/* Vice Cover Studio — editor chrome.
+   Tokens follow the 21st.dev guide: near-black background, one magenta
+   accent, pill buttons, soft cards. The sunset colour lives only inside
+   the cover artwork, never in the chrome around it. */
+
+@font-face {
+  font-family: 'Anton';
+  src: url('./fonts/Anton-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('./fonts/BebasNeue-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Archivo Black';
+  src: url('./fonts/ArchivoBlack-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #171717;
+  --surface-2: #232323;
+  --border: rgba(255, 255, 255, 0.10);
+  --text: #fafafa;
+  --muted: #a8a8a8;
+  --accent: #ff2e88;
+  --accent-ink: #fff;
+  --radius: 16px;
+  --pill: 999px;
+  --font-display: 'Anton', 'Archivo Black', system-ui, sans-serif;
+  --font-label: 'Bebas Neue', system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---- top bar ---- */
+.topbar {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 24px 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark {
+  width: 52px; height: 52px;
+  display: grid; place-items: center;
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+}
+.topbar h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+}
+.tagline { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+}
+
+/* ---- studio layout ---- */
+.studio {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 16px 24px 24px;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.controls { padding: 8px 20px 20px; }
+.stage { padding: 20px 24px 24px; }
+
+.group { padding: 16px 0; border-bottom: 1px solid var(--border); }
+.group:last-child { border-bottom: 0; padding-bottom: 4px; }
+.group h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-label);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.step {
+  display: inline-grid; place-items: center;
+  width: 22px; height: 22px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  vertical-align: 2px;
+}
+.hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.field-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font-body);
+}
+input[type="text"]:focus-visible,
+button:focus-visible,
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- buttons ---- */
+button {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: var(--pill);
+  padding: 10px 22px;
+  transition: transform 160ms ease-out, background 160ms ease-out, opacity 160ms ease-out;
+}
+button:hover { transform: scale(1.04); }
+button:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+.seg { display: flex; gap: 8px; flex-wrap: wrap; }
+.seg button { padding: 8px 16px; }
+.seg button.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.ghost { background: transparent; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.upload-btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border-radius: var(--pill);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 160ms ease-out;
+}
+.upload-btn:hover { transform: scale(1.04); }
+.upload-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+
+.cta {
+  width: 100%;
+  margin-top: 16px;
+  padding: 13px 24px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-size: 15px;
+}
+#status { min-height: 22px; margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+#status.ok { color: #7ee2a8; }
+
+/* ---- photo tray ---- */
+.tray { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 4px; }
+.tray:empty { display: none; }
+.tray img {
+  width: 64px; height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.tray img.picked { border-color: var(--accent); }
+.tray .tray-empty { color: var(--muted); font-size: 13px; }
+
+.row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.row .field-label { margin: 0; flex: 0 0 auto; }
+input[type="range"] { flex: 1; accent-color: var(--accent); }
+output { font-family: var(--font-mono); font-size: 13px; min-width: 48px; text-align: right; }
+
+/* ---- preview stage ---- */
+.stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.stage-head h2 {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.stage-head .hint { margin: 0; }
+.canvas-wrap {
+  margin-top: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #14081f;
+}
+#cover { display: block; width: 100%; height: auto; cursor: grab; touch-action: none; }
+#cover.dragging { cursor: grabbing; }
+.steps {
+  display: flex; gap: 8px 24px; flex-wrap: wrap;
+  margin: 16px 0 0; padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 13px;
+}
+.steps strong { color: var(--text); }
+
+.foot {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px 28px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* shot mode: cover alone, chrome hidden */
+body.shot-cover .topbar,
+body.shot-cover .controls,
+body.shot-cover .stage-head,
+body.shot-cover .steps,
+body.shot-cover .foot { display: none; }
+body.shot-cover { background: #14081f; }
+body.shot-cover .studio { display: block; max-width: none; margin: 0; padding: 0; }
+body.shot-cover .stage { background: transparent; border: 0; border-radius: 0; padding: 0; }
+body.shot-cover .canvas-wrap { border: 0; border-radius: 0; margin: 0; }
+body.shot-cover #cover { width: 100vw; height: 100vh; object-fit: contain; }
+
+@media (max-width: 900px) {
+  .studio { grid-template-columns: 1fr; }
+  .topbar h1 { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

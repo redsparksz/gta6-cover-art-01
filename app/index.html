@@ -3,21 +3,99 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Vice Cover Studio — turn your photo into GTA-style cover art</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">V</span>
+    <div>
+      <h1>VICE COVER STUDIO</h1>
+      <p class="tagline">Your photo. Your caption. Vice City cover.</p>
+    </div>
+  </div>
+  <p class="eyebrow">GTA-STYLE COVER MAKER &middot; OFFLINE &middot; NO UPLOAD</p>
+</header>
+
+<main class="studio">
+  <section class="panel controls" aria-label="Cover controls">
+    <div class="group">
+      <h2><span class="step">1</span> Photos</h2>
+      <p class="hint">Add one photo or several. Click a panel in the preview, then pick a photo for it. Drag a panel to move the photo, scroll to zoom.</p>
+      <label class="upload-btn" for="photos">Add photos
+        <input id="photos" type="file" accept="image/*" multiple>
+      </label>
+      <div class="tray" id="tray" aria-label="Loaded photos"></div>
+      <div class="row">
+        <label class="field-label" for="zoom">Zoom panel</label>
+        <input id="zoom" type="range" min="1" max="3" step="0.05" value="1">
+        <output id="zoomVal" for="zoom">1.00&times;</output>
+      </div>
+      <div class="row btn-row">
+        <button id="fitBtn" type="button" class="ghost">Reset crop</button>
+        <button id="swapBtn" type="button" class="ghost">Use in all panels</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2><span class="step">2</span> Caption</h2>
+      <label class="field-label" for="caption">Main caption</label>
+      <input id="caption" type="text" maxlength="40" value="VICE NIGHTS" autocomplete="off">
+      <label class="field-label" for="sub">Strip label</label>
+      <input id="sub" type="text" maxlength="48" value="VICE CITY &middot; EST. 2026" autocomplete="off">
+    </div>
+
+    <div class="group">
+      <h2><span class="step">3</span> Layout</h2>
+      <div class="seg" id="layoutSeg" role="group" aria-label="Layout">
+        <button type="button" data-layout="hero" class="on">Hero + 2</button>
+        <button type="button" data-layout="quad">Grid 2&times;2</button>
+        <button type="button" data-layout="strip">Full-bleed</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2><span class="step">4</span> Colour grade</h2>
+      <div class="seg" id="gradeSeg" role="group" aria-label="Colour grade">
+        <button type="button" data-grade="sunset" class="on">Sunset</button>
+        <button type="button" data-grade="neon">Neon Night</button>
+        <button type="button" data-grade="dusk">Palm Dusk</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2><span class="step">5</span> Export size</h2>
+      <div class="seg" id="sizeSeg" role="group" aria-label="Export size">
+        <button type="button" data-size="1080x1080">1080 &times; 1080</button>
+        <button type="button" data-size="1080x1350">1080 &times; 1350</button>
+        <button type="button" data-size="1920x1080" class="on">1920 &times; 1080</button>
+      </div>
+      <button id="export" type="button" class="cta">Export PNG</button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </div>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+
+  <section class="panel stage" aria-label="Live preview">
+    <div class="stage-head">
+      <h2>Live preview</h2>
+      <p id="panelInfo" class="hint">Panel 1 selected &mdash; drag to move, scroll to zoom</p>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="cover" width="1920" height="1080" aria-label="Cover preview"></canvas>
+    </div>
+    <ol class="steps">
+      <li><strong>1.</strong> Add a photo</li>
+      <li><strong>2.</strong> Write a caption</li>
+      <li><strong>3.</strong> Pick a size &amp; export</li>
+    </ol>
+  </section>
 </main>
+
+<footer class="foot">
+  <p>Photos never leave your machine. Fonts: Anton, Bebas Neue &amp; Archivo Black under the SIL Open Font License 1.1 (see app/fonts/OFL.txt). Sample photos were made with an image model for make.fun and are free to use. An original design &mdash; no Rockstar logo, artwork or font.</p>
+</footer>
+
 <script type="module" src="./src/main.js"></script>
 </body>
 </html>
